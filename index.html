@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Billie Jean Records</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: the label's own identity on a bright page. Black condensed type like the BJR logo, tiger orange for action, tiger yellow for light, real studio photos. */
+:root{
+  --ink:#f5f3f8; --stage:#ffffff; --raise:#efebf4; --line:#e2dcea;
+  --text:#17131d; --mute:#6a6377;
+  --hot:#f05a00; --amber:#a85a00; --amberFill:#ffb21a; --ok:#11885a; --warn:#b86e00; --bad:#d23a3a; --violet:#5f45cc;
+  --display:"Oswald", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --body:"Manrope", "Segoe UI", system-ui, sans-serif;
+  --r:14px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.005em;text-transform:uppercase}
+h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:800}
+h2{font-size:clamp(1.6rem,3.4vw,2.4rem);font-weight:700}
+h3{font-size:1.2rem;font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.mute{color:var(--mute)}
+.small{font-size:.85rem}
+.eyebrow{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:700}
+
+/* header */
+header.top{position:sticky;top:0;z-index:20;background:rgba(245,243,248,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:18px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;letter-spacing:.02em;font-size:1.05rem;white-space:nowrap}
+.brand i{display:grid;grid-template-columns:repeat(3,7px);gap:2px}
+.brand img{height:40px;width:auto;display:block}
+.brand i b{width:7px;height:7px;border-radius:1px;background:var(--raise)}
+.brand i b:nth-child(1),.brand i b:nth-child(5),.brand i b:nth-child(9){background:var(--hot)}
+.brand i b:nth-child(3),.brand i b:nth-child(7){background:var(--amberFill)}
+nav.main{display:flex;gap:4px;margin-left:auto;align-items:center;flex-wrap:wrap}
+nav.main a{text-decoration:none;padding:8px 12px;border-radius:999px;color:var(--mute);font-weight:600;font-size:.92rem}
+nav.main a:hover,nav.main a.on{color:var(--text);background:var(--raise)}
+.cartlink{position:relative}
+.badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--hot);color:#fff;font-size:.72rem;font-weight:700;margin-left:4px}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;padding:6px 10px;font-size:.8rem;font-weight:700;color:var(--mute);cursor:pointer}
+.lang button.on{background:var(--text);color:var(--ink)}
+@media (max-width:760px){.bar{height:auto;flex-wrap:wrap;padding:10px 0}nav.main{margin-left:0;width:100%}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;border:1px solid transparent;font-weight:700;cursor:pointer;text-decoration:none;font-size:.95rem;transition:transform .12s, background .12s}
+.btn:hover{transform:translateY(-1px)}
+.btn.hot{background:var(--hot);color:#fff}
+.btn.light{background:var(--text);color:var(--ink)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--mute)}
+.btn.sm{padding:7px 14px;font-size:.85rem}
+.btn.ok{background:var(--ok);color:#06210f}
+.btn.bad{background:transparent;border-color:var(--bad);color:var(--bad)}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 30%,rgba(245,243,248,.55) 70%,rgba(245,243,248,.2))}
+.hero .wrap{position:relative;padding-top:56px;padding-bottom:56px;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;max-width:1180px}
+.hero .txt{display:grid;gap:22px}
+.hero .pic{border-radius:18px;overflow:hidden;aspect-ratio:4/3}
+.hero .pic img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}}
+.hero h1 em{font-style:normal;color:var(--hot)}
+.hero p{max-width:58ch;color:var(--text);font-size:1.1rem;margin:0}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+section.block{padding:64px 0;border-bottom:1px solid var(--line)}
+.head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+
+/* journey */
+.journey{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.journey a{padding:20px 16px;text-decoration:none;border-right:1px solid var(--line);display:grid;gap:6px;background:var(--stage)}
+.journey a:last-child{border-right:0}
+.journey a:hover{background:var(--raise)}
+.journey .n{font-family:var(--display);font-size:2rem;font-weight:800;color:var(--hot);line-height:1}
+.journey b{font-family:var(--display);font-size:1.1rem}
+@media (max-width:860px){.journey{grid-template-columns:repeat(2,1fr)}.journey a{border-bottom:1px solid var(--line)}}
+
+/* categories & cards */
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.cat .cimg{margin:-20px -20px 4px;height:150px;overflow:hidden}.cat .cimg img{width:100%;height:100%;object-fit:cover;display:block}
+.cat{overflow:hidden;background:var(--stage);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:10px;text-decoration:none;cursor:pointer;text-align:left}
+.cat:hover{border-color:var(--mute)}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;width:120px}
+.tiles b{aspect-ratio:1;border-radius:2px;background:var(--raise)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 14px;font-weight:600;font-size:.88rem;cursor:pointer;color:var(--mute)}
+.chip.on{background:var(--text);color:var(--ink);border-color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--stage);box-shadow:0 1px 2px rgba(23,19,29,.04);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;text-decoration:none}
+.card:hover{border-color:var(--mute)}
+.card .art{height:150px;position:relative;background:var(--raise)}
+.card .art img,.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.card .art canvas{width:100%;height:100%;display:block}
+.card .body{padding:16px;display:grid;gap:8px;flex:1}
+.card .foot{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--line);font-size:.88rem}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid var(--line);color:var(--mute);white-space:nowrap}
+.tag.book{color:var(--amber);border-color:rgba(184,110,0,.35)}
+.tag.buy{color:var(--ok);border-color:rgba(17,136,90,.35)}
+.tag.quote{color:var(--violet);border-color:rgba(95,69,204,.35)}
+
+/* service page */
+.svc{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;padding:44px 0}
+@media (max-width:900px){.svc{grid-template-columns:1fr}}
+.svc>*,.cols>*,.related>*{min-width:0}
+.crumbs{font-size:.85rem;color:var(--mute);margin-bottom:14px}
+.crumbs a{color:var(--mute)}
+.panel{background:var(--stage);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-content:start}
+.offer{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.offer:last-child{border-bottom:0}
+.offer .p{font-family:var(--display);font-weight:700;font-size:1.15rem}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{flex:1;border:0;background:transparent;border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:600;color:var(--mute);font-size:.88rem}
+.seg button.on{background:var(--raise);color:var(--text)}
+.days{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.day{flex:0 0 auto;border:1px solid var(--line);background:transparent;border-radius:10px;padding:8px 10px;cursor:pointer;text-align:center;min-width:58px}
+.day b{display:block;font-family:var(--display);font-size:1.15rem}
+.day.on{background:var(--hot);border-color:var(--hot);color:#fff}
+.times{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px}
+.time{border:1px solid var(--line);background:transparent;border-radius:8px;padding:8px 0;cursor:pointer;font-weight:600;font-size:.88rem}
+.time.on{background:var(--amberFill);color:#17131d;border-color:var(--amberFill)}
+.time[disabled]{opacity:.25;cursor:not-allowed;text-decoration:line-through}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:1.1rem}
+.timeline{position:relative;height:34px;background:var(--raise);border-radius:8px;overflow:hidden}
+.timeline .blk{position:absolute;top:4px;bottom:4px;border-radius:5px;background:rgba(23,19,29,.75)}
+.timeline .blk.pend{background:transparent;border:1.5px dashed var(--amber)}
+.timeline .blk.mine{background:var(--amberFill)}
+.tl-scale{display:flex;justify-content:space-between;font-size:.7rem;color:var(--mute);margin-top:4px}
+.total{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.total .p{font-family:var(--display);font-size:1.6rem}
+.related{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+@media (max-width:900px){.related{grid-template-columns:1fr}}
+.rel{background:var(--stage);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;align-content:start}
+.rel a{display:flex;justify-content:space-between;gap:10px;text-decoration:none;padding:10px 12px;border-radius:10px;background:var(--raise);font-weight:600;font-size:.92rem}
+.rel a:hover{outline:1px solid var(--mute)}
+.note{border-left:3px solid var(--amberFill);padding:10px 14px;background:rgba(255,191,77,.14);border-radius:0 10px 10px 0;font-size:.9rem}
+.note.req{border-color:var(--violet);background:rgba(95,69,204,.07)}
+
+/* forms */
+label.f{display:grid;gap:6px;font-size:.85rem;font-weight:600;color:var(--mute)}
+input.i,select.i,textarea.i{background:var(--stage);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--text);width:100%}
+textarea.i{min-height:110px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.9rem}
+.check input{margin-top:4px;accent-color:var(--hot)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:600px){.two{grid-template-columns:1fr}}
+
+/* lists */
+.list{display:grid;gap:10px}
+.item{background:var(--stage);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center}
+.item .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+.pill.confirmed,.pill.paid,.pill.booked{background:rgba(17,136,90,.12);color:var(--ok)}
+.pill.pending,.pill.new,.pill.meeting,.pill.priced,.pill.move{background:rgba(255,191,77,.25);color:var(--amber)}
+.pill.refused,.pill.impossible{background:rgba(210,58,58,.1);color:var(--bad)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 24px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:800px){.cols{grid-template-columns:1fr}}
+.agenda{background:var(--stage);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.agenda .slot{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:.9rem}
+.sms{font-family:ui-monospace,Menlo,monospace;font-size:.82rem;background:var(--stage);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.empty{padding:30px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:var(--r)}
+.demo{background:repeating-linear-gradient(45deg,rgba(255,191,77,.16) 0 10px,transparent 10px 20px);border:1px solid rgba(184,110,0,.3);border-radius:12px;padding:12px 16px;font-size:.88rem}
+
+/* modal & toast */
+.modal{position:fixed;inset:0;background:rgba(23,19,29,.45);display:grid;place-items:center;z-index:50;padding:16px}
+.modal .box{background:var(--stage);border:1px solid var(--line);border-radius:18px;max-width:440px;width:100%;padding:24px;display:grid;gap:14px}
+.ctp{background:#f7f7f9;border:1px solid var(--line);color:#1a1a1a;border-radius:12px;padding:16px;display:grid;gap:10px}
+.ctp .hd{display:flex;justify-content:space-between;font-weight:700}
+.ctp input{background:#f3f3f3;border:1px solid #ddd;border-radius:8px;padding:10px;color:#1a1a1a}
+.toasts{position:fixed;right:16px;bottom:16px;display:grid;gap:8px;z-index:60;max-width:360px}
+.toast{background:var(--raise);border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:10px;padding:10px 14px;font-size:.85rem;box-shadow:0 10px 30px rgba(23,19,29,.12)}
+footer{padding:40px 0;color:var(--mute);font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="soon" style="background:var(--text);color:var(--ink);font-size:.85rem;text-align:center;padding:8px 16px"></div>
+<header class="top"><div class="wrap bar">
+  <a class="brand" href="#home"><i><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></i>BILLIE JEAN RECORDS</a>
+  <nav class="main" id="nav"></nav>
+</div></header>
+<main id="app"></main>
+<footer><div class="wrap" id="foot"></div></footer>
+<div class="toasts" id="toasts"></div>
+<div id="modal"></div>
+
+<script>
+/* ============ CONFIG ============ */
+const OPEN=10*60, CLOSE=22*60, BUFFER=10, DEPOSIT=0.4;
+const ROOMS={rec:{en:"Recording room",fr:"Salle d'enregistrement"},dj:{en:"DJ room",fr:"Salle DJ"}};
+const CATS=[
+ {id:"studio",en:"Studio",fr:"Studio",den:"Record, mix and master in Sousse or remotely.",dfr:"Enregistrer, mixer et masteriser, à Sousse ou à distance."},
+ {id:"dj",en:"DJing",fr:"DJing",den:"Train, learn and record your sets in our DJ room.",dfr:"S'entraîner, apprendre et enregistrer ses sets dans notre salle DJ."},
+ {id:"release",en:"Digital release",fr:"Sortie digitale",den:"Put your music on Spotify and 200+ platforms.",dfr:"Votre musique sur Spotify et plus de 200 plateformes."},
+ {id:"image",en:"Image",fr:"Image",den:"Music videos, shoots, styling and event coverage.",dfr:"Clips, shootings, stylisme et couverture d'événements."},
+ {id:"design",en:"Design",fr:"Design",den:"Logos, covers, websites and printed material.",dfr:"Logos, pochettes, sites web et supports imprimés."},
+ {id:"merch",en:"Merch",fr:"Merch",den:"Your brand on clothes and accessories.",dfr:"Votre marque sur vêtements et accessoires."}
+];
+const rates=(a,b,c)=>({1:a,4:b,8:c});
+const pk=(n,ten,tfr,price,per)=>({t:"fixed",en:n+" · "+ten,fr:n+" · "+tfr,price,per});
+const S=[
+ // studio rooms
+ {id:"vocal-recording",cat:"studio",room:"rec",en:"Vocal Recording",fr:"Enregistrement voix",den:"Record your vocals in a treated room. Come alone and run the session yourself, or book it with our engineer.",dfr:"Enregistrez votre voix dans une salle traitée. Venez seul et gérez la session vous-même, ou réservez-la avec notre ingénieur.",opts:[{en:"Room only",fr:"Salle seule",r:rates(50,180,320)},{en:"Room + engineer",fr:"Salle + ingénieur",r:rates(80,300,560)}]},
+ {id:"instrument-recording",cat:"studio",room:"rec",en:"Instrument Recording",fr:"Enregistrement instrument",den:"Capture guitars, keys, percussion or a full band take. Bring your own engineer or book ours.",dfr:"Captez guitares, claviers, percussions ou une prise en groupe. Venez avec votre ingénieur ou réservez le nôtre.",opts:[{en:"Room only",fr:"Salle seule",r:rates(50,180,320)},{en:"Room + engineer",fr:"Salle + ingénieur",r:rates(80,300,560)}]},
+ {id:"voiceover-recording",cat:"studio",room:"rec",en:"Voiceover Recording",fr:"Enregistrement voix off",den:"Clean voice for ads, podcasts, documentaries and dubbing.",dfr:"Une voix propre pour pubs, podcasts, documentaires et doublage.",opts:[{en:"Room only",fr:"Salle seule",r:rates(50,180,320)},{en:"Room + engineer",fr:"Salle + ingénieur",r:rates(80,300,560)}]},
+ {id:"analog-mix",cat:"studio",en:"Analog Mix",fr:"Mix analogique",den:"Each stem mixed one by one on our analog chain in the studio. The deepest, most precise mix we offer.",dfr:"Chaque piste mixée une à une sur notre chaîne analogique en studio. Le mix le plus fin et le plus précis.",
+  offers:[pk("Track","1 track","1 titre",350),pk("Single","2 tracks","2 titres",650),pk("EP","5 tracks","5 titres",900),pk("Album","8 tracks","8 titres",2200),{t:"fixed",en:"2 extra revisions",fr:"2 retouches en plus",price:120,extra:1}],inc:{en:"2 revisions included",fr:"2 retouches incluses"}},
+ {id:"digital-mix",cat:"studio",en:"Digital Mix",fr:"Mix numérique",den:"A lighter in-the-box mix for vocals + instrumental, ads and voiceovers. Also useful as feedback while you compose.",dfr:"Un mix numérique plus léger pour voix + instru, pubs et voix off. Utile aussi comme retour pendant la composition.",
+  offers:[pk("Track","1 track","1 titre",220),pk("Single","2 tracks","2 titres",420),pk("EP","5 tracks","5 titres",900),pk("Album","8 tracks","8 titres",1300),{t:"fixed",en:"2 extra revisions",fr:"2 retouches en plus",price:80,extra:1}],inc:{en:"2 revisions included",fr:"2 retouches incluses"}},
+ {id:"ai-mastering",cat:"studio",en:"AI Mastering",fr:"Mastering IA",den:"Fast, affordable mastering to test a track or send a polished demo.",dfr:"Un mastering rapide et abordable pour tester un titre ou envoyer une démo soignée.",
+  offers:[pk("Track","1 track","1 titre",40),pk("Single","2 tracks","2 titres",70),pk("EP","5 tracks","5 titres",150),pk("Album","8 tracks","8 titres",200),{t:"fixed",en:"2 extra revisions",fr:"2 retouches en plus",price:10,extra:1}],inc:{en:"2 revisions included",fr:"2 retouches incluses"}},
+ {id:"studio-mastering",cat:"studio",en:"Studio Mastering",fr:"Mastering studio",den:"Mastered by an engineer for release: loudness, balance and a finish that holds up on every system.",dfr:"Masterisé par un ingénieur pour la sortie : volume, équilibre et un rendu solide sur tous les systèmes.",
+  offers:[pk("Track","1 track","1 titre",150),pk("Single","2 tracks","2 titres",280),pk("EP","5 tracks","5 titres",650),pk("Album","8 tracks","8 titres",1000),{t:"fixed",en:"2 extra revisions",fr:"2 retouches en plus",price:40,extra:1}],inc:{en:"2 revisions included",fr:"2 retouches incluses"}},
+ // dj
+ {id:"djing-training",cat:"dj",room:"dj",en:"DJing Training Sessions",fr:"Sessions d'entraînement DJ",den:"Practise on pro gear in our DJ room, at your own pace.",dfr:"Entraînez-vous sur du matériel pro dans notre salle DJ, à votre rythme.",opts:[{en:"DJ room",fr:"Salle DJ",r:rates(50,180,300)}]},
+ {id:"djing-courses",cat:"dj",room:"dj",en:"DJing Courses",fr:"Cours de DJing",den:"One-to-one lessons with our instructor, from first mix to performance.",dfr:"Cours particuliers avec notre formateur, du premier mix à la performance.",opts:[{en:"Course with instructor",fr:"Cours avec formateur",r:rates(80,280,480)}]},
+ {id:"sets-recording",cat:"dj",room:"dj",en:"Sets Recording",fr:"Enregistrement de sets",den:"Record a live or prepared set in studio quality to share or send to promoters.",dfr:"Enregistrez un set live ou préparé en qualité studio, pour le partager ou l'envoyer aux organisateurs.",opts:[{en:"DJ room",fr:"Salle DJ",r:rates(60,200,320)}]},
+ // release
+ {id:"spotify-distribution",cat:"release",en:"Spotify Distribution",fr:"Distribution Spotify",den:"Your release on Spotify for life, with one payment. 100% online.",dfr:"Votre sortie sur Spotify à vie, en un seul paiement. 100 % en ligne.",
+  offers:[pk("Track","1 track","1 titre",30),pk("Single","2 tracks","2 titres",40),pk("EP","3–5 tracks","3–5 titres",45),pk("Album","6–8 tracks","6–8 titres",60)]},
+ {id:"worldwide-distribution",cat:"release",en:"Worldwide Distribution",fr:"Distribution mondiale",den:"Spotify, Apple Music, Deezer, Anghami, Beatport, Shazam and 200+ platforms, for life, with one payment.",dfr:"Spotify, Apple Music, Deezer, Anghami, Beatport, Shazam et plus de 200 plateformes, à vie, en un seul paiement.",
+  offers:[pk("Track","1 track","1 titre",60),pk("Single","2 tracks","2 titres",100),pk("EP","3–5 tracks","3–5 titres",120),pk("Album","6–8 tracks","6–8 titres",180)]},
+ {id:"youtube-content-id",cat:"release",en:"YouTube Content ID",fr:"YouTube Content ID",den:"Protect and earn from your music when it is used on YouTube.",dfr:"Protégez votre musique et gagnez de l'argent quand elle est utilisée sur YouTube.",req:"worldwide-distribution",
+  offers:[{t:"from",en:"Content ID",fr:"Content ID",price:10}]},
+ {id:"label-registration",cat:"release",en:"Label Registration",fr:"Création de label",den:"Release under your own label name. We handle the registration, 100% online.",dfr:"Sortez votre musique sous votre propre label. Nous gérons l'enregistrement, 100 % en ligne.",
+  offers:[{t:"from",en:"Label creation",fr:"Création du label",price:100}]},
+ // image
+ {id:"clip",cat:"image",en:"Music Video",fr:"Clip",den:"A music video directed around your identity, from concept to final cut.",dfr:"Un clip réalisé autour de votre identité, du concept au montage final.",offers:[{t:"quote",en:"Music video",fr:"Clip"}]},
+ {id:"shooting",cat:"image",en:"Photo Shoot",fr:"Shooting photo",den:"Portraits and press photos by our photographers.",dfr:"Portraits et photos presse par nos photographes.",offers:[{t:"quote",en:"Photo shoot",fr:"Shooting"}]},
+ {id:"wardrobe-design",cat:"image",en:"Wardrobe Design",fr:"Stylisme",den:"Hair, make-up, outfits, poses and set: stylists who build your look.",dfr:"Coiffure, maquillage, tenues, poses et décor : des stylistes qui construisent votre look.",offers:[{t:"quote",en:"Wardrobe design",fr:"Stylisme"}]},
+ {id:"event-photography",cat:"image",en:"Event Photography",fr:"Photographie d'événement",den:"Photo coverage of your concert, party or launch.",dfr:"Couverture photo de votre concert, soirée ou lancement.",offers:[{t:"quote",en:"Event photography",fr:"Photo d'événement"}]},
+ {id:"event-videography",cat:"image",en:"Event Videography",fr:"Vidéo d'événement",den:"Video coverage and aftermovie of your event.",dfr:"Couverture vidéo et aftermovie de votre événement.",offers:[{t:"quote",en:"Event videography",fr:"Vidéo d'événement"}]},
+ {id:"teaser-production",cat:"image",en:"Teaser Production",fr:"Production de teaser",den:"Short teasers that build anticipation before a release or event.",dfr:"Des teasers courts qui créent l'attente avant une sortie ou un événement.",offers:[{t:"quote",en:"Teaser",fr:"Teaser"}]},
+ // design
+ {id:"logo-creation",cat:"design",en:"Logo Creation",fr:"Création de logo",den:"A unique logo for an artist, producer or label.",dfr:"Un logo unique pour un artiste, un producteur ou un label.",offers:[{t:"quote",en:"Logo",fr:"Logo"}]},
+ {id:"album-cover-design",cat:"design",en:"Album Cover Design",fr:"Pochette d'album",den:"Covers that meet streaming and physical release standards.",dfr:"Des pochettes conformes aux normes du streaming et des sorties physiques.",offers:[{t:"from",en:"Cover design",fr:"Design de pochette",price:240},{t:"quote",en:"CD cover printing",fr:"Impression pochette CD"},{t:"quote",en:"Vinyl cover printing",fr:"Impression pochette vinyle"}]},
+ {id:"artist-website",cat:"design",en:"Artist Website",fr:"Site d'artiste",den:"A website for your music, shows, tickets and galleries.",dfr:"Un site pour votre musique, vos concerts, la billetterie et vos galeries.",offers:[{t:"from",en:"Artist website",fr:"Site d'artiste",price:600}]},
+ {id:"album-booklet",cat:"design",en:"Album Booklet",fr:"Livret d'album",den:"A booklet that tells the story behind your album.",dfr:"Un livret qui raconte l'histoire derrière votre album.",offers:[{t:"from",en:"Booklet design",fr:"Design du livret",price:1500},{t:"quote",en:"Booklet printing",fr:"Impression du livret"}]},
+ {id:"posters",cat:"design",en:"Posters",fr:"Affiches",den:"Posters for your release, tour or event.",dfr:"Des affiches pour votre sortie, tournée ou événement.",offers:[{t:"from",en:"Poster design",fr:"Design d'affiche",price:140},{t:"quote",en:"Poster printing",fr:"Impression d'affiches"}]},
+ {id:"flyers",cat:"design",en:"Flyers",fr:"Flyers",den:"Flyers to promote an event and spread the word.",dfr:"Des flyers pour promouvoir un événement.",offers:[{t:"from",en:"Flyer design",fr:"Design de flyer",price:140},{t:"quote",en:"Flyer printing",fr:"Impression de flyers"}]},
+ {id:"business-cards",cat:"design",en:"Business Cards",fr:"Cartes de visite",den:"Business cards that carry your brand.",dfr:"Des cartes de visite à l'image de votre marque.",offers:[{t:"from",en:"Card design",fr:"Design de carte",price:200},{t:"quote",en:"Card printing",fr:"Impression de cartes"}]},
+ {id:"tickets-invitations",cat:"design",en:"Tickets & Invitations",fr:"Tickets & invitations",den:"Tickets and invitations that match your event.",dfr:"Des tickets et invitations à l'image de votre événement.",offers:[{t:"from",en:"Design",fr:"Design",price:100},{t:"quote",en:"Printing",fr:"Impression"}]},
+ {id:"badges-pins",cat:"design",en:"Badges & Pins",fr:"Badges & pins",den:"Custom badges and pins for fans, crews and events.",dfr:"Badges et pins personnalisés pour fans, équipes et événements.",offers:[{t:"from",en:"Design",fr:"Design",price:140},{t:"quote",en:"Printing",fr:"Impression"}]},
+ // merch
+ {id:"t-shirts",cat:"merch",en:"T-shirts",fr:"T-shirts",den:"Custom T-shirts your fans will want to wear.",dfr:"Des t-shirts personnalisés que vos fans voudront porter.",offers:[{t:"from",en:"T-shirt design",fr:"Design de t-shirt",price:140},{t:"unit",en:"Printing, per piece",fr:"Impression, par pièce",price:15}]},
+ {id:"caps",cat:"merch",en:"Caps",fr:"Casquettes",den:"Caps with your logo or artwork.",dfr:"Des casquettes avec votre logo ou visuel.",offers:[{t:"from",en:"Cap design",fr:"Design de casquette",price:80},{t:"unit",en:"Printing, per piece",fr:"Impression, par pièce",price:20}]},
+ {id:"tote-bags",cat:"merch",en:"Tote Bags",fr:"Tote bags",den:"Light, personalised tote bags that go everywhere.",dfr:"Des tote bags légers et personnalisés.",offers:[{t:"from",en:"Tote bag design",fr:"Design de tote bag",price:140},{t:"quote",en:"Tote bag printing",fr:"Impression de tote bags"}]},
+ {id:"rings",cat:"merch",en:"Rings",fr:"Bagues",den:"Custom rings as a statement piece of your brand.",dfr:"Des bagues personnalisées, pièces fortes de votre marque.",offers:[{t:"from",en:"Ring design",fr:"Design de bague",price:140},{t:"unit",en:"Production, per piece",fr:"Production, par pièce",price:50}]},
+ {id:"necklaces",cat:"merch",en:"Necklaces",fr:"Colliers",den:"Necklaces designed to your taste, for you and your fans.",dfr:"Des colliers créés selon vos goûts, pour vous et vos fans.",offers:[{t:"from",en:"Necklace design",fr:"Design de collier",price:140},{t:"unit",en:"Production, per piece",fr:"Production, par pièce",price:50}]},
+ {id:"smartphone-cases",cat:"merch",en:"Smartphone Cases",fr:"Coques de téléphone",den:"Phone cases with your artwork.",dfr:"Des coques de téléphone avec votre visuel.",offers:[{t:"from",en:"Case design",fr:"Design de coque",price:100},{t:"quote",en:"Case production",fr:"Production de coques"}]}
+];
+const SV=Object.fromEntries(S.map(s=>[s.id,s]));
+/* Photos: files served next to the page (photos/<service-id>.jpg). Listed here once they are added. */
+const PHOTOS=new Set(S.map(s=>s.id)); const LOGO=true;
+const art=(s,suffix)=>PHOTOS.has(s.id)?`<img src="photos/${s.id}${suffix?"-wide":""}.jpg" alt="${esc(nm(s))}" loading="lazy">`:`<canvas data-art="${s.id}${suffix||""}" data-cat="${s.cat}" style="width:100%;height:100%;display:block"></canvas>`;
+// alternatives / complements / next steps
+const REL={
+ "vocal-recording":{c:["instrument-recording"],n:["analog-mix","digital-mix"]},
+ "instrument-recording":{c:["vocal-recording"],n:["analog-mix","digital-mix"]},
+ "voiceover-recording":{n:["digital-mix"]},
+ "digital-mix":{a:["analog-mix"],n:["ai-mastering","studio-mastering"]},
+ "analog-mix":{a:["digital-mix"],n:["studio-mastering","ai-mastering"]},
+ "ai-mastering":{a:["studio-mastering"],n:["spotify-distribution","worldwide-distribution"]},
+ "studio-mastering":{a:["ai-mastering"],n:["worldwide-distribution","spotify-distribution"]},
+ "djing-training":{a:["djing-courses"],c:["sets-recording"],n:["sets-recording"]},
+ "djing-courses":{a:["djing-training"],n:["djing-training","sets-recording"]},
+ "sets-recording":{c:["event-videography"],n:["ai-mastering","teaser-production"]},
+ "spotify-distribution":{a:["worldwide-distribution"],c:["album-cover-design"],n:["label-registration"]},
+ "worldwide-distribution":{a:["spotify-distribution"],c:["album-cover-design","youtube-content-id"],n:["label-registration","clip"]},
+ "youtube-content-id":{c:["clip"]},
+ "label-registration":{c:["logo-creation"],n:["worldwide-distribution","artist-website"]},
+ "clip":{a:["teaser-production"],c:["wardrobe-design","shooting"],n:["youtube-content-id"]},
+ "shooting":{a:["event-photography"],c:["wardrobe-design"],n:["album-cover-design","posters","artist-website"]},
+ "wardrobe-design":{c:["shooting","clip"]},
+ "event-photography":{a:["event-videography"],c:["event-videography"],n:["teaser-production"]},
+ "event-videography":{a:["event-photography"],c:["event-photography"],n:["teaser-production"]},
+ "teaser-production":{a:["clip"],c:["posters","flyers"],n:["event-photography","event-videography"]},
+ "logo-creation":{c:["business-cards","badges-pins"],n:["t-shirts","caps","artist-website"]},
+ "album-cover-design":{c:["album-booklet"],n:["worldwide-distribution","posters"]},
+ "album-booklet":{c:["album-cover-design"]},
+ "artist-website":{c:["logo-creation","shooting"]},
+ "posters":{a:["flyers"],c:["tickets-invitations"],n:["event-photography","event-videography"]},
+ "flyers":{a:["posters"],c:["tickets-invitations","business-cards"]},
+ "business-cards":{c:["logo-creation","badges-pins"]},
+ "tickets-invitations":{c:["posters","badges-pins"],n:["event-photography","event-videography"]},
+ "badges-pins":{c:["tickets-invitations","t-shirts"]},
+ "t-shirts":{c:["caps","tote-bags"],p:["logo-creation"]},
+ "caps":{c:["t-shirts"],p:["logo-creation"]},
+ "tote-bags":{c:["t-shirts","smartphone-cases"],p:["logo-creation"]},
+ "rings":{a:["necklaces"],c:["necklaces"]},
+ "necklaces":{a:["rings"],c:["rings"]},
+ "smartphone-cases":{c:["tote-bags"],p:["logo-creation"]}
+};
+const JOURNEY=[["Record","Enregistrer","vocal-recording"],["Mix","Mixer","analog-mix"],["Master","Masteriser","studio-mastering"],["Release","Sortir","worldwide-distribution"],["Visuals","Visuels","clip"],["Merch","Merch","t-shirts"]];
+
+/* ============ I18N ============ */
+const T={
+ en:{services:"Services",account:"My space",admin:"Studio admin",cart:"Cart",heroA:"Art is your business.",heroB:"Business is our art.",heroP:"Recording, mixing, mastering, distribution, visuals and merch. One studio in Sousse for every step of an artist's career.",bookRoom:"Book a room",explore:"Explore services",journey:"Your release, step by step",journeyP:"Each service points to the next one, so you always know what comes after.",cats:"What we do",rooms:"Two rooms in Sousse",roomsP:"Book by the hour. 10 minutes are kept free between sessions.",nextFree:"Next free slot",all:"All",book:"Book",buy:"Buy online",quote:"On quote",from:"From",perPiece:"per piece",tnd:"TND",
+  alt:"Alternatives",comp:"Goes well with",next:"Next step",prereq:"Needed first",nothing:"Nothing here for this service.",
+  option:"Option",date:"Date",duration:"Duration",start:"Start time",hour:"h",total:"Total",addCart:"Add to cart",added:"Added to cart",requestQuote:"Request a quote",
+  quoteHelp:"Tell us about your project. We reply with a price, a meeting proposal, or let you know if we can't do it.",message:"Your project",send:"Send request",
+  reqNote:"Available only together with a Worldwide Distribution pack.",addReq:"Add Worldwide Distribution first",fromNote:"Base price. We confirm the final price after reviewing your project.",qty:"Quantity",
+  busy:"Busy",pendingL:"Request (pay on site)",yourSlot:"Your slot",
+  cartEmpty:"Your cart is empty.",remove:"Remove",payMode:"How do you want to pay your room bookings?",full:"Pay 100% online",fullD:"Booking confirmed now.",dep:"Pay 40% deposit online",depD:"Booking confirmed now. 60% paid at the studio.",onsite:"Pay everything at the studio",onsiteD:"Sent as a request. Online bookings have priority. If nobody books your slot online before the day before, it is confirmed automatically by SMS.",
+  you:"Your details",name:"Full name",phone:"Phone",email:"Email",terms:"I accept the terms: payments are non-refundable. Changing a booking date is possible on request and subject to the studio's approval.",payNow:"Due now",checkout:"Confirm and pay",sendReq:"Send booking request",
+  ctp:"ClicToPay · secure payment",ctpDemo:"Demo: no real card is charged.",card:"Card number",pay:"Pay",cancel:"Cancel",paidOk:"Payment accepted",
+  myBookings:"My bookings",myQuotes:"My quote requests",myOrders:"My orders",login:"Enter your phone number to see your bookings, quotes and orders.",see:"Show",logout:"Change number",
+  move:"Change date",moveReq:"Change requested",acceptPay:"Accept and pay",chooseSlot:"Choose a meeting time",
+  st:{confirmed:"Confirmed",pending:"Request",refused:"Refused",new:"Waiting for reply",priced:"Quote ready",meeting:"Meeting proposed",impossible:"Not possible",paid:"Paid",booked:"Meeting booked",move:"Change requested"},
+  adminDemo:"Demo admin. In the real platform this area is protected by a login.",tCal:"Calendar",tReq:"Requests",tQuotes:"Quotes",tOrders:"Orders",tSms:"SMS sent",j1:"Run the D-1 check now",validate:"Validate",refuse:"Refuse",accept:"Accept",
+  sendPrice:"Send price",proposeMeet:"Propose meeting",impossible:"Not possible",price:"Price",online:"Online",inperson:"At the studio",reset:"Reset demo",noData:"Nothing yet.",
+  smsDemo:"SMS through WinSMS (simulated in this demo)",conflict:"This slot is no longer free.",saved:"Done",closed:"Closed",
+  soon:"Online booking and payment open soon. Until then, book by phone: +216 51 534 543.",demoBanner:"Test version. Payments (ClicToPay) and SMS (WinSMS) are simulated. Data stays in this browser.",phoneNum:"+216 51 534 543"},
+ fr:{services:"Services",account:"Mon espace",admin:"Admin studio",cart:"Panier",heroA:"L'art est votre métier.",heroB:"Le business est notre art.",heroP:"Enregistrement, mix, mastering, distribution, image et merch. Un studio à Sousse pour chaque étape d'une carrière d'artiste.",bookRoom:"Réserver une salle",explore:"Voir les services",journey:"Votre sortie, étape par étape",journeyP:"Chaque service renvoie au suivant : vous savez toujours ce qui vient après.",cats:"Ce que nous faisons",rooms:"Deux salles à Sousse",roomsP:"Réservation à l'heure. 10 minutes restent libres entre deux sessions.",nextFree:"Prochain créneau libre",all:"Tout",book:"Réserver",buy:"Achat en ligne",quote:"Sur devis",from:"À partir de",perPiece:"par pièce",tnd:"TND",
+  alt:"Alternatives",comp:"À prendre avec",next:"Étape suivante",prereq:"Nécessaire avant",nothing:"Rien ici pour ce service.",
+  option:"Option",date:"Date",duration:"Durée",start:"Heure de début",hour:"h",total:"Total",addCart:"Ajouter au panier",added:"Ajouté au panier",requestQuote:"Demander un devis",
+  quoteHelp:"Parlez-nous de votre projet. Nous répondons par un prix, une proposition de réunion, ou nous vous disons si ce n'est pas possible.",message:"Votre projet",send:"Envoyer la demande",
+  reqNote:"Disponible uniquement avec un pack Distribution mondiale.",addReq:"Ajouter d'abord la Distribution mondiale",fromNote:"Prix de base. Le prix final est confirmé après étude de votre projet.",qty:"Quantité",
+  busy:"Occupé",pendingL:"Demande (paiement sur place)",yourSlot:"Votre créneau",
+  cartEmpty:"Votre panier est vide.",remove:"Retirer",payMode:"Comment voulez-vous payer vos réservations de salle ?",full:"Payer 100 % en ligne",fullD:"Réservation confirmée tout de suite.",dep:"Payer un acompte de 40 % en ligne",depD:"Réservation confirmée tout de suite. 60 % à payer au studio.",onsite:"Tout payer au studio",onsiteD:"Envoyé comme demande. Les réservations payées en ligne sont prioritaires. Si personne ne réserve votre créneau en ligne avant la veille, il est confirmé automatiquement par SMS.",
+  you:"Vos coordonnées",name:"Nom complet",phone:"Téléphone",email:"E-mail",terms:"J'accepte les conditions : les paiements ne sont pas remboursables. Le changement de date d'une réservation est possible sur demande, sous réserve d'accord du studio.",payNow:"À payer maintenant",checkout:"Confirmer et payer",sendReq:"Envoyer la demande de réservation",
+  ctp:"ClicToPay · paiement sécurisé",ctpDemo:"Démo : aucune vraie carte n'est débitée.",card:"Numéro de carte",pay:"Payer",cancel:"Annuler",paidOk:"Paiement accepté",
+  myBookings:"Mes réservations",myQuotes:"Mes demandes de devis",myOrders:"Mes commandes",login:"Entrez votre numéro de téléphone pour voir vos réservations, devis et commandes.",see:"Afficher",logout:"Changer de numéro",
+  move:"Changer la date",moveReq:"Changement demandé",acceptPay:"Accepter et payer",chooseSlot:"Choisir un créneau de réunion",
+  st:{confirmed:"Confirmée",pending:"Demande",refused:"Refusée",new:"En attente de réponse",priced:"Devis prêt",meeting:"Réunion proposée",impossible:"Impossible",paid:"Payé",booked:"Réunion fixée",move:"Changement demandé"},
+  adminDemo:"Admin de démo. Dans la vraie plateforme, cet espace est protégé par un identifiant.",tCal:"Calendrier",tReq:"Demandes",tQuotes:"Devis",tOrders:"Commandes",tSms:"SMS envoyés",j1:"Lancer la vérification J-1 maintenant",validate:"Valider",refuse:"Refuser",accept:"Accepter",
+  sendPrice:"Envoyer le prix",proposeMeet:"Proposer une réunion",impossible:"Impossible",price:"Prix",online:"En ligne",inperson:"Au studio",reset:"Réinitialiser la démo",noData:"Rien pour l'instant.",
+  smsDemo:"SMS via WinSMS (simulés dans cette démo)",conflict:"Ce créneau n'est plus libre.",saved:"C'est fait",closed:"Fermé",
+  soon:"La réservation et le paiement en ligne ouvrent bientôt. En attendant, réservez par téléphone : +216 51 534 543.",demoBanner:"Version de test. Les paiements (ClicToPay) et les SMS (WinSMS) sont simulés. Les données restent dans ce navigateur.",phoneNum:"+216 51 534 543"}
+};
+let st;
+const L=()=>st.lang;
+const t=k=>T[L()][k]??T.en[k]??k;
+const nm=o=>o[L()]||o.en;
+const ds=s=>L()==="fr"?s.dfr:s.den;
+
+/* ============ STATE ============ */
+const dayKey=d=>d.toISOString().slice(0,10);
+const addDays=(n)=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+n);return dayKey(d)};
+const hm=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+const uid=()=>Math.random().toString(36).slice(2,8).toUpperCase();
+function seed(){
+ return {lang:"en",cart:[],me:null,sms:[],orders:[],
+  bookings:[
+   {id:"B-1A2B",service:"vocal-recording",opt:1,room:"rec",date:addDays(0),start:14*60,dur:2,pay:"full",status:"confirmed",client:{name:"Yassine B.",phone:"+216 22 111 222"},amount:160,paid:160},
+   {id:"B-3C4D",service:"sets-recording",opt:0,room:"dj",date:addDays(1),start:18*60,dur:2,pay:"onsite",status:"pending",client:{name:"Nour K.",phone:"+216 55 333 444"},amount:120,paid:0},
+   {id:"B-5E6F",service:"djing-courses",opt:0,room:"dj",date:addDays(1),start:11*60,dur:4,pay:"deposit",status:"confirmed",client:{name:"Rania M.",phone:"+216 98 555 666"},amount:280,paid:112},
+   {id:"B-7G8H",service:"instrument-recording",opt:0,room:"rec",date:addDays(2),start:10*60,dur:4,pay:"onsite",status:"pending",client:{name:"Karim S.",phone:"+216 50 777 888"},amount:180,paid:0}
+  ],
+  quotes:[
+   {id:"Q-9J1K",service:"clip",offer:"Music video",client:{name:"Nour K.",phone:"+216 55 333 444"},message:"Clip for my single, 3 minutes, one location in Sousse, about 5 extras.",status:"new",created:addDays(0)},
+   {id:"Q-2L3M",service:"logo-creation",offer:"Logo",client:{name:"Yassine B.",phone:"+216 22 111 222"},message:"Logo for my label Medina Sound.",status:"priced",price:450,created:addDays(-1)}
+  ]};
+}
+function load(){try{const s=JSON.parse(localStorage.getItem("bjr-demo"));if(s&&s.bookings)return s}catch(e){}return seed()}
+function save(){try{localStorage.setItem("bjr-demo",JSON.stringify(st))}catch(e){}}
+st=load();
+
+/* ============ LOGIC ============ */
+function priceHours(r,h){ // best combination of 8h, 4h, 1h packs
+ const best=[0];for(let i=1;i<=h;i++){let v=best[i-1]+r[1];if(i>=4)v=Math.min(v,best[i-4]+r[4]);if(i>=8)v=Math.min(v,best[i-8]+r[8]);best[i]=v}return best[h];
+}
+const blocking=(room,date,except)=>st.bookings.filter(b=>b.room===room&&b.date===date&&b.status==="confirmed"&&b.id!==except);
+function free(room,date,start,dur,except){
+ const end=start+dur*60;if(start<OPEN||end>CLOSE)return false;
+ if(date===addDays(0)){const n=new Date();if(start<=n.getHours()*60+n.getMinutes())return false}
+ return blocking(room,date,except).every(b=>end+BUFFER<=b.start||b.start+b.dur*60+BUFFER<=start);
+}
+function nextFree(room){for(let d=0;d<14;d++){const k=addDays(d);for(let m=OPEN;m<=CLOSE-60;m+=30)if(free(room,k,m,1))return {k,m}}return null}
+function sms(to,en,fr){const text=st.lang==="fr"?fr:en;st.sms.unshift({to,text,at:new Date().toLocaleString()});toast("SMS → "+to+": "+text)}
+const STUDIO="Studio";
+const fmtDate=k=>new Date(k+"T12:00:00").toLocaleDateString(L()==="fr"?"fr-FR":"en-GB",{weekday:"short",day:"numeric",month:"short"});
+const money=n=>n.toLocaleString("fr-FR")+" TND";
+function svcType(s){if(s.room)return "book";if(s.offers.every(o=>o.t==="quote"))return "quote";if(s.offers.some(o=>o.t==="quote"))return "mixed";return "buy"}
+function minPrice(s){if(s.room)return Math.min(...s.opts.map(o=>o.r[1]));const p=s.offers.filter(o=>o.price&&!o.extra).map(o=>o.price);return p.length?Math.min(...p):null}
+
+/* ============ UI HELPERS ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;$("#toasts").prepend(el);const all=$("#toasts").children;while(all.length>3)all[all.length-1].remove();setTimeout(()=>el.remove(),5200)}
+function modal(html){$("#modal").innerHTML=html?`<div class="modal" id="mbg"><div class="box">${html}</div></div>`:"";}
+function tileArt(canvas,seedStr,cat){
+ const c=canvas,x=c.getContext("2d"),w=c.width=c.offsetWidth*2||500,h=c.height=c.offsetHeight*2||240;
+ let s=0;for(const ch of seedStr)s=(s*31+ch.charCodeAt(0))>>>0;const rnd=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+ const hue={studio:330,dj:28,release:155,image:265,design:200,merch:45}[cat]||330;
+ x.fillStyle="#efebf4";x.fillRect(0,0,w,h);const n=14,size=w/n;
+ for(let i=0;i<n;i++)for(let j=0;j<Math.ceil(h/size);j++){const r=rnd();x.fillStyle=r>.8?`hsl(${hue} 85% 58%)`:r>.7?`hsl(${hue+40} 90% 62%)`:r>.45?"#e2dcea":"#f7f5fa";x.fillRect(i*size+2,j*size+2,size-4,size-4)}
+}
+function catTiles(cat){let s="";for(let i=0;i<18;i++){const on=((i*7+cat.length*3)%5===0);s+=`<b style="${on?`background:${i%2?"var(--hot)":"var(--amberFill)"}`:""}"></b>`}return `<div class="tiles">${s}</div>`}
+
+/* ============ VIEWS ============ */
+let view={catFilter:"all",adminTab:"cal",adminDay:addDays(0),book:{}};
+function nav(){
+ const h=location.hash.slice(1)||"home",n=st.cart.length;
+ $("#nav").innerHTML=`<a href="#services" class="${h.startsWith("s")&&h!=="home"?"on":""}">${t("services")}</a><a href="#account" class="${h==="account"?"on":""}">${t("account")}</a><a href="#admin" class="${h==="admin"?"on":""}">${t("admin")}</a><a href="#cart" class="cartlink ${h==="cart"?"on":""}">${t("cart")}${n?`<span class="badge">${n}</span>`:""}</a><div class="lang"><button data-lang="en" class="${L()==="en"?"on":""}">EN</button><button data-lang="fr" class="${L()==="fr"?"on":""}">FR</button></div>`;
+ $("#soon").textContent=t("soon");
+ if(LOGO)document.querySelector("header .brand").innerHTML='<img src="photos/logo.png" alt="Billie Jean Records">';
+ $("#foot").innerHTML=`<div style="display:grid;gap:8px"><img src="photos/logo.png" alt="Billie Jean Records" style="height:44px;width:auto;justify-self:start"><div>Sousse, Tunisia · ${t("phoneNum")}</div></div><div class="small" style="max-width:52ch">${t("demoBanner")} <button class="btn ghost sm" id="reset">${t("reset")}</button></div>`;
+}
+function render(){
+ document.documentElement.lang=L();nav();
+ const h=location.hash.slice(1)||"home";let html="";
+ if(h==="home")html=home();else if(h==="services")html=services();else if(h.startsWith("s-")&&SV[h.slice(2)])html=service(SV[h.slice(2)]);
+ else if(h==="cart")html=cart();else if(h==="account")html=account();else if(h==="admin")html=admin();else html=home();
+ $("#app").innerHTML=html;window.scrollTo(0,0);after(h);
+}
+function rerender(){const y=window.scrollY;const h=location.hash.slice(1)||"home";nav();
+ let html=h==="services"?services():h.startsWith("s-")&&SV[h.slice(2)]?service(SV[h.slice(2)]):h==="cart"?cart():h==="account"?account():h==="admin"?admin():home();
+ $("#app").innerHTML=html;after(h);window.scrollTo(0,y)}
+function after(h){
+ document.querySelectorAll("canvas[data-art]").forEach(c=>tileArt(c,c.dataset.art,c.dataset.cat));
+ if(h==="home"||h==="")heroCanvas();
+}
+function heroCanvas(){
+ const c=$("#hero-c");if(!c)return;const x=c.getContext("2d");const fit=()=>{c.width=c.offsetWidth;c.height=c.offsetHeight};fit();
+ const size=46;const cols=Math.ceil(c.width/size)+1,rows=Math.ceil(c.height/size)+1;const lit=new Map();
+ const draw=()=>{x.clearRect(0,0,c.width,c.height);for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){const k=i+","+j,v=lit.get(k)||0;x.fillStyle=v>0?`rgba(${224+Math.round(31*(1-v))},${30+Math.round(161*(1-v))},${102-Math.round(25*(1-v))},${.2+.7*v})`:"rgba(226,220,234,.75)";x.fillRect(i*size+3,j*size+3,size-6,size-6)}};
+ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ for(let n=0;n<26;n++)lit.set(Math.floor(Math.random()*cols)+","+Math.floor(Math.random()*rows),Math.random());
+ draw();if(reduce)return;
+ clearInterval(window.__heroT);window.__heroT=setInterval(()=>{if(!document.body.contains(c)){clearInterval(window.__heroT);return}
+  for(const [k,v] of lit){const nv=v-.06;nv<=0?lit.delete(k):lit.set(k,nv)}
+  for(let n=0;n<2;n++)lit.set(Math.floor(Math.random()*cols)+","+Math.floor(Math.random()*rows),1);draw()},120);
+}
+function home(){
+ const rf=r=>{const f=nextFree(r);return f?`${fmtDate(f.k)} · ${hm(f.m)}`:"—"};
+ return `<section class="hero"><div class="wrap"><div class="txt">
+  <span class="eyebrow">Billie Jean Records · Sousse</span>
+  <h1>${t("heroA")}<br><em>${t("heroB")}</em></h1><p>${t("heroP")}</p>
+  <div class="row"><a class="btn hot" href="#s-vocal-recording">${t("bookRoom")}</a><a class="btn ghost" href="#services">${t("explore")}</a></div></div><div class="pic"><img src="photos/hero.jpg" alt="Billie Jean Records cassette"></div></div></section>
+ <section class="block"><div class="wrap"><div class="head"><div><span class="eyebrow">01 → 06</span><h2>${t("journey")}</h2></div><p class="mute" style="max-width:44ch;margin:0">${t("journeyP")}</p></div>
+  <div class="journey">${JOURNEY.map((j,i)=>`<a href="#s-${j[2]}"><span class="n num">0${i+1}</span><b>${L()==="fr"?j[1]:j[0]}</b><span class="small mute">${nm(SV[j[2]])}</span></a>`).join("")}</div></div></section>
+ <section class="block"><div class="wrap"><div class="head"><h2>${t("rooms")}</h2><p class="mute" style="margin:0">${t("roomsP")}</p></div>
+  <div class="cols">${["rec","dj"].map(r=>`<div class="panel"><h3>${nm(ROOMS[r])}</h3><div class="small mute">${S.filter(s=>s.room===r).map(nm).join(" · ")}</div><div><span class="small mute">${t("nextFree")}</span><div class="num" style="font-family:var(--display);font-size:1.3rem;font-weight:700">${rf(r)}</div></div><a class="btn light sm" style="justify-self:start" href="#s-${S.find(s=>s.room===r).id}">${t("book")}</a></div>`).join("")}</div></div></section>
+ <section class="block" style="border-bottom:0"><div class="wrap"><div class="head"><h2>${t("cats")}</h2></div>
+  <div class="cats">${CATS.map(c=>`<button class="cat" data-cat="${c.id}"><div class="cimg"><img src="photos/${({studio:"analog-mix",dj:"djing-training",release:"worldwide-distribution",image:"clip",design:"posters",merch:"t-shirts"})[c.id]}.jpg" alt="" loading="lazy"></div><h3>${nm(c)}</h3><span class="mute small">${L()==="fr"?c.dfr:c.den}</span><span class="small">${S.filter(s=>s.cat===c.id).length} services →</span></button>`).join("")}</div></div></section>`;
+}
+function tagOf(s){const ty=svcType(s);return ty==="book"?`<span class="tag book">${t("book")}</span>`:ty==="quote"?`<span class="tag quote">${t("quote")}</span>`:ty==="mixed"?`<span class="tag buy">${t("buy")}</span><span class="tag quote">${t("quote")}</span>`:`<span class="tag buy">${t("buy")}</span>`}
+function card(s){const p=minPrice(s);return `<a class="card" href="#s-${s.id}"><div class="art">${art(s)}</div><div class="body"><span class="small mute">${nm(CATS.find(c=>c.id===s.cat))}</span><h3>${nm(s)}</h3><span class="small mute">${ds(s)}</span></div><div class="foot"><span class="row" style="gap:6px">${tagOf(s)}</span><span class="num">${p!=null?`${t("from")} <b>${p}</b> TND`:""}</span></div></a>`}
+function services(){
+ const list=S.filter(s=>view.catFilter==="all"||s.cat===view.catFilter);
+ return `<section class="block" style="border:0"><div class="wrap"><div class="head"><h1 style="font-size:clamp(2rem,5vw,3.2rem)">${t("services")}</h1></div>
+ <div class="filters">${[["all",t("all")],...CATS.map(c=>[c.id,nm(c)])].map(([id,n])=>`<button class="chip ${view.catFilter===id?"on":""}" data-filter="${id}">${n}</button>`).join("")}</div>
+ <div class="grid">${list.map(card).join("")}</div></div></section>`;
+}
+function relBlock(s){
+ const r=REL[s.id]||{};const col=(k,title)=>`<div class="rel"><span class="eyebrow">${title}</span>${(r[k]||[]).length?r[k].map(id=>{const x=SV[id];const p=minPrice(x);return `<a href="#s-${id}"><span>${nm(x)}</span><span class="mute num small">${p!=null?t("from")+" "+p:t("quote")}</span></a>`}).join(""):`<span class="small mute">${t("nothing")}</span>`}</div>`;
+ return `<div class="related">${r.p?col("p",t("prereq")):col("a",t("alt"))}${col("c",t("comp"))}${col("n",t("next"))}</div>`;
+}
+function service(s){
+ const cat=CATS.find(c=>c.id===s.cat);
+ return `<div class="wrap"><div class="svc"><div style="display:grid;gap:18px;align-content:start">
+  <div class="crumbs"><a href="#services">${t("services")}</a> / ${nm(cat)}</div>
+  <div class="row" style="gap:6px">${tagOf(s)}${s.room?`<span class="tag">${nm(ROOMS[s.room])}</span>`:""}</div>
+  <h1 style="font-size:clamp(2.2rem,5vw,3.6rem)">${nm(s)}</h1><p style="font-size:1.1rem;max-width:58ch;margin:0">${ds(s)}</p>
+  <div class="photo" style="height:${PHOTOS.has(s.id)?"320px":"200px"};border-radius:var(--r);overflow:hidden;background:var(--raise)">${art(s,"x")}</div>
+ </div><div>${s.room?bookingPanel(s):offerPanel(s)}</div></div>
+ <h2 style="margin-bottom:14px">${L()==="fr"?"Pour aller plus loin":"Keep going"}</h2>${relBlock(s)}<div style="height:60px"></div></div>`;
+}
+function bookingPanel(s){
+ const b=view.book[s.id]||(view.book[s.id]={opt:0,date:addDays(0),dur:1,start:null});
+ const days=[...Array(14)].map((_,i)=>addDays(i));
+ const r=s.opts[b.opt].r;const price=priceHours(r,b.dur);
+ const starts=[];for(let m=OPEN;m<=CLOSE-b.dur*60;m+=30)starts.push(m);
+ if(b.start!=null&&!free(s.room,b.date,b.start,b.dur))b.start=null;
+ const dayB=st.bookings.filter(x=>x.room===s.room&&x.date===b.date&&(x.status==="confirmed"||x.status==="pending"));
+ const pos=m=>((m-OPEN)/(CLOSE-OPEN)*100).toFixed(2)+"%";
+ return `<div class="panel">
+  ${s.opts.length>1?`<div><div class="small mute" style="margin-bottom:6px">${t("option")}</div><div class="seg">${s.opts.map((o,i)=>`<button data-bopt="${i}" class="${b.opt===i?"on":""}">${nm(o)}</button>`).join("")}</div></div>`:""}
+  <div class="num small mute">1${t("hour")} · ${r[1]} TND &nbsp; 4${t("hour")} · ${r[4]} TND &nbsp; 8${t("hour")} · ${r[8]} TND</div>
+  <div><div class="small mute" style="margin-bottom:6px">${t("date")}</div><div class="days">${days.map(d=>{const dt=new Date(d+"T12:00:00");return `<button class="day ${b.date===d?"on":""}" data-bdate="${d}"><span class="small">${dt.toLocaleDateString(L()==="fr"?"fr-FR":"en-GB",{weekday:"short"})}</span><b class="num">${dt.getDate()}</b></button>`}).join("")}</div></div>
+  <div><div class="small mute" style="margin-bottom:6px">${nm(ROOMS[s.room])} · ${fmtDate(b.date)}</div>
+   <div class="timeline">${dayB.map(x=>`<div class="blk ${x.status==="pending"?"pend":""}" style="left:${pos(x.start)};width:calc(${pos(x.start+x.dur*60)} - ${pos(x.start)})" title="${x.status==="pending"?t("pendingL"):t("busy")}"></div>`).join("")}${b.start!=null?`<div class="blk mine" style="left:${pos(b.start)};width:calc(${pos(b.start+b.dur*60)} - ${pos(b.start)})"></div>`:""}</div>
+   <div class="tl-scale num"><span>${hm(OPEN)}</span><span>${hm((OPEN+CLOSE)/2)}</span><span>${hm(CLOSE)}</span></div>
+   <div class="row small mute" style="gap:14px;margin-top:6px"><span><b style="display:inline-block;width:10px;height:10px;background:rgba(23,19,29,.75);border-radius:2px"></b> ${t("busy")}</span><span><b style="display:inline-block;width:10px;height:10px;border:1.5px dashed var(--amber);border-radius:2px"></b> ${t("pendingL")}</span><span><b style="display:inline-block;width:10px;height:10px;background:var(--amberFill);border-radius:2px"></b> ${t("yourSlot")}</span></div></div>
+  <div class="row" style="justify-content:space-between"><span class="small mute">${t("duration")}</span><div class="stepper"><button data-bdur="-1" aria-label="-1h">−</button><b class="num" style="min-width:42px;text-align:center">${b.dur} ${t("hour")}</b><button data-bdur="1" aria-label="+1h">+</button></div></div>
+  <div><div class="small mute" style="margin-bottom:6px">${t("start")}</div><div class="times">${starts.map(m=>`<button class="time num ${b.start===m?"on":""}" data-bstart="${m}" ${free(s.room,b.date,m,b.dur)?"":"disabled"}>${hm(m)}</button>`).join("")}</div></div>
+  <div class="total"><span>${t("total")}</span><span class="p num">${money(price)}</span></div>
+  <button class="btn hot" data-addbook="${s.id}" ${b.start==null?"disabled":""}>${t("addCart")}</button>
+ </div>`;
+}
+function offerPanel(s){
+ const inCart=st.cart.some(c=>c.service===s.req);const bought=st.orders.some(o=>o.items.some(i=>i.service===s.req));
+ const locked=s.req&&!inCart&&!bought;
+ return `<div class="panel">${s.inc?`<span class="tag buy" style="justify-self:start">${nm(s.inc)}</span>`:""}
+ ${s.req?`<div class="note">${t("reqNote")}</div>`:""}
+ ${s.offers.map((o,i)=>{
+  if(o.t==="quote")return `<div class="offer"><div><b>${nm(o)}</b><div class="small mute">${t("quote")}</div></div><button class="btn ghost sm" data-quote="${s.id}|${i}">${t("requestQuote")}</button></div>`;
+  if(o.t==="unit")return `<div class="offer"><div><b>${nm(o)}</b><div class="small mute num">${t("from")} ${o.price} TND ${t("perPiece")}</div></div><div class="row" style="gap:8px"><input class="i num" type="number" min="1" value="20" id="qty-${s.id}-${i}" aria-label="${t("qty")}" style="width:84px"><button class="btn light sm" data-add="${s.id}|${i}" ${locked?"disabled":""}>${t("addCart")}</button></div></div>`;
+  return `<div class="offer"><div><b>${nm(o)}</b>${o.t==="from"?`<div class="small mute">${t("from")}</div>`:""}</div><div class="row" style="gap:12px"><span class="p num">${o.price} TND</span><button class="btn light sm" data-add="${s.id}|${i}" ${locked?"disabled":""}>${t("addCart")}</button></div></div>`}).join("")}
+ ${s.offers.some(o=>o.t==="from"||o.t==="unit")?`<div class="small mute">${t("fromNote")}</div>`:""}
+ ${locked?`<a class="btn hot" href="#s-${s.req}">${t("addReq")}</a>`:""}</div>`;
+}
+function cartLine(c){
+ if(c.kind==="booking")return `${nm(SV[c.service])} · ${nm(SV[c.service].opts[c.opt])}<div class="small mute num">${nm(ROOMS[c.room])} · ${fmtDate(c.date)} · ${hm(c.start)}–${hm(c.start+c.dur*60)} (${c.dur} ${t("hour")})</div>`;
+ const o=SV[c.service].offers[c.offer];return `${nm(SV[c.service])} · ${nm(o)}${c.qty?`<div class="small mute num">${c.qty} × ${o.price} TND</div>`:""}`;
+}
+function totals(){
+ const bk=st.cart.filter(c=>c.kind==="booking").reduce((a,c)=>a+c.price,0),other=st.cart.filter(c=>c.kind!=="booking").reduce((a,c)=>a+c.price,0);
+ const pm=view.pay||"full";const bnow=pm==="full"?bk:pm==="deposit"?Math.round(bk*DEPOSIT*1000)/1000:0;
+ return {bk,other,total:bk+other,now:bnow+other,pm};
+}
+function cart(){
+ if(!st.cart.length)return `<div class="wrap" style="padding:60px 20px"><h1 style="font-size:2.4rem;margin-bottom:20px">${t("cart")}</h1><div class="empty">${t("cartEmpty")} <a href="#services">${t("explore")}</a></div></div>`;
+ const T0=totals();const hasB=T0.bk>0;const me=st.me||{};
+ return `<div class="wrap" style="padding:44px 20px 70px"><h1 style="font-size:2.4rem;margin-bottom:24px">${t("cart")}</h1><div class="svc" style="padding:0">
+ <div style="display:grid;gap:18px;align-content:start"><div class="list">${st.cart.map((c,i)=>`<div class="item"><div>${cartLine(c)}</div><div class="acts"><b class="num">${money(c.price)}</b><button class="btn ghost sm" data-rm="${i}">${t("remove")}</button></div></div>`).join("")}</div>
+ ${hasB?`<div class="panel"><b>${t("payMode")}</b>${[["full",t("full"),t("fullD")],["deposit",t("dep"),t("depD")],["onsite",t("onsite"),t("onsiteD")]].map(([v,a,b])=>`<label class="check"><input type="radio" name="pm" value="${v}" ${T0.pm===v?"checked":""}><span><b>${a}</b><br><span class="mute">${b}</span></span></label>`).join("")}</div>`:""}
+ </div>
+ <form class="panel" id="checkout"><b>${t("you")}</b>
+  <label class="f" for="c-name">${t("name")}<input class="i" id="c-name" required value="${esc(me.name)}"></label>
+  <div class="two"><label class="f" for="c-phone">${t("phone")}<input class="i" id="c-phone" required value="${esc(me.phone||"+216 ")}"></label><label class="f" for="c-email">${t("email")}<input class="i" id="c-email" type="email" value="${esc(me.email)}"></label></div>
+  <label class="check"><input type="checkbox" id="c-terms" required><span>${t("terms")}</span></label>
+  <div class="total"><span>${t("total")}</span><span class="num">${money(T0.total)}</span></div>
+  <div class="total"><span>${t("payNow")}</span><span class="p num" style="color:var(--hot)">${money(T0.now)}</span></div>
+  <button class="btn hot" type="submit">${T0.now>0?t("checkout"):t("sendReq")}</button></form></div></div>`;
+}
+function account(){
+ const me=st.me;
+ if(!me)return `<div class="wrap" style="padding:60px 20px;max-width:520px"><h1 style="font-size:2.4rem;margin-bottom:14px">${t("account")}</h1><p class="mute">${t("login")}</p><form id="login" class="row"><input class="i" id="l-phone" value="+216 55 333 444" style="flex:1" aria-label="${t("phone")}"><button class="btn hot">${t("see")}</button></form></div>`;
+ const mine=x=>x.client.phone.replace(/\s/g,"")===me.phone.replace(/\s/g,"");
+ const bk=st.bookings.filter(mine),qs=st.quotes.filter(mine),os=st.orders.filter(mine);
+ return `<div class="wrap" style="padding:44px 20px 70px;display:grid;gap:28px"><div class="row" style="justify-content:space-between"><div><h1 style="font-size:2.4rem">${t("account")}</h1><span class="mute">${esc(me.name||"")} · ${esc(me.phone)}</span></div><button class="btn ghost sm" id="logout">${t("logout")}</button></div>
+ <div><h2 style="margin-bottom:12px">${t("myBookings")}</h2><div class="list">${bk.length?bk.map(b=>`<div class="item"><div><b>${nm(SV[b.service])}</b> <span class="pill ${b.move?"move":b.status}">${b.move?t("st").move:t("st")[b.status]}</span><div class="small mute num">${nm(ROOMS[b.room])} · ${fmtDate(b.date)} · ${hm(b.start)}–${hm(b.start+b.dur*60)} · ${money(b.amount)} (${money(b.paid)} ${L()==="fr"?"payé":"paid"})</div>${b.move?`<div class="small" style="color:var(--amber)">→ ${fmtDate(b.move.date)} · ${hm(b.move.start)}</div>`:""}</div><div class="acts">${b.status==="confirmed"&&!b.move?`<button class="btn ghost sm" data-move="${b.id}">${t("move")}</button>`:""}</div></div>`).join(""):`<div class="empty">${t("noData")}</div>`}</div></div>
+ <div><h2 style="margin-bottom:12px">${t("myQuotes")}</h2><div class="list">${qs.length?qs.map(q=>`<div class="item"><div><b>${nm(SV[q.service])}</b> <span class="pill ${q.status}">${t("st")[q.status]}</span><div class="small mute">${esc(q.message)}</div>
+   ${q.status==="priced"?`<div class="num" style="margin-top:6px"><b>${money(q.price)}</b>${q.note?` · <span class="mute">${esc(q.note)}</span>`:""}</div>`:""}
+   ${q.status==="impossible"&&q.note?`<div class="small" style="color:var(--bad)">${esc(q.note)}</div>`:""}
+   ${q.status==="meeting"?`<div style="margin-top:8px"><div class="small mute" style="margin-bottom:6px">${t("chooseSlot")} · ${q.mode==="online"?t("online"):t("inperson")}</div><div class="row" style="gap:6px">${q.slots.map((sl,i)=>`<button class="btn ghost sm num" data-pick="${q.id}|${i}">${fmtDate(sl.slice(0,10))} ${sl.slice(11,16)}</button>`).join("")}</div></div>`:""}
+   ${q.status==="booked"?`<div class="small num" style="color:var(--ok)">${fmtDate(q.chosen.slice(0,10))} ${q.chosen.slice(11,16)} · ${q.mode==="online"?t("online"):t("inperson")}</div>`:""}
+  </div><div class="acts">${q.status==="priced"?`<button class="btn hot sm" data-qpay="${q.id}">${t("acceptPay")}</button>`:""}</div></div>`).join(""):`<div class="empty">${t("noData")}</div>`}</div></div>
+ <div><h2 style="margin-bottom:12px">${t("myOrders")}</h2><div class="list">${os.length?os.map(o=>`<div class="item"><div><b class="num">${o.id}</b> <span class="pill paid">${t("st").paid}</span><div class="small mute">${o.items.map(i=>nm(SV[i.service])).join(" · ")}</div></div><b class="num">${money(o.total)}</b></div>`).join(""):`<div class="empty">${t("noData")}</div>`}</div></div></div>`;
+}
+function admin(){
+ const tabs=[["cal",t("tCal")],["req",t("tReq")+` (${st.bookings.filter(b=>b.status==="pending"||b.move).length})`],["quotes",t("tQuotes")+` (${st.quotes.filter(q=>q.status==="new").length})`],["orders",t("tOrders")],["sms",t("tSms")]];
+ let body="";const tab=view.adminTab;
+ if(tab==="cal"){const d=view.adminDay;
+  body=`<div class="days" style="margin-bottom:16px">${[...Array(14)].map((_,i)=>addDays(i)).map(k=>{const dt=new Date(k+"T12:00:00");return `<button class="day ${d===k?"on":""}" data-aday="${k}"><span class="small">${dt.toLocaleDateString(L()==="fr"?"fr-FR":"en-GB",{weekday:"short"})}</span><b class="num">${dt.getDate()}</b></button>`}).join("")}</div>
+  <div class="cols">${["rec","dj"].map(r=>{const list=st.bookings.filter(b=>b.room===r&&b.date===d&&b.status!=="refused").sort((a,b)=>a.start-b.start);
+   return `<div class="agenda"><h3>${nm(ROOMS[r])}</h3><div class="small mute" style="margin-bottom:8px">${fmtDate(d)} · ${hm(OPEN)}–${hm(CLOSE)}</div>${list.length?list.map(b=>`<div class="slot"><span class="num"><b>${hm(b.start)}–${hm(b.start+b.dur*60)}</b></span><span>${nm(SV[b.service])} · ${esc(b.client.name)} <span class="pill ${b.status}">${t("st")[b.status]}</span><br><span class="small mute">${b.pay==="full"?"100 %":b.pay==="deposit"?"40 %":L()==="fr"?"sur place":"on site"} · ${money(b.paid)} / ${money(b.amount)}</span></span></div>`).join(""):`<div class="empty">${t("noData")}</div>`}</div>`}).join("")}</div>`;}
+ if(tab==="req"){const pend=st.bookings.filter(b=>b.status==="pending"),mv=st.bookings.filter(b=>b.move);
+  body=`<div class="row" style="margin-bottom:14px"><button class="btn light sm" id="j1">${t("j1")}</button><span class="small mute">${L()==="fr"?"Automatique chaque jour dans la vraie plateforme.":"Runs automatically every day in the real platform."}</span></div>
+  <div class="list">${pend.map(b=>`<div class="item"><div><b>${nm(SV[b.service])}</b> <span class="pill pending">${t("st").pending}</span><div class="small mute num">${nm(ROOMS[b.room])} · ${fmtDate(b.date)} · ${hm(b.start)}–${hm(b.start+b.dur*60)} · ${esc(b.client.name)} ${esc(b.client.phone)} · ${money(b.amount)} ${L()==="fr"?"sur place":"on site"}</div></div><div class="acts"><button class="btn ok sm" data-val="${b.id}">${t("validate")}</button><button class="btn bad sm" data-ref="${b.id}">${t("refuse")}</button></div></div>`).join("")}
+  ${mv.map(b=>`<div class="item"><div><b>${nm(SV[b.service])}</b> <span class="pill move">${t("st").move}</span><div class="small mute num">${fmtDate(b.date)} ${hm(b.start)} → <b style="color:var(--text)">${fmtDate(b.move.date)} ${hm(b.move.start)}</b> · ${esc(b.client.name)}</div></div><div class="acts"><button class="btn ok sm" data-mvok="${b.id}">${t("accept")}</button><button class="btn bad sm" data-mvno="${b.id}">${t("refuse")}</button></div></div>`).join("")}
+  ${!pend.length&&!mv.length?`<div class="empty">${t("noData")}</div>`:""}</div>`;}
+ if(tab==="quotes"){body=`<div class="list">${st.quotes.length?st.quotes.map(q=>`<div class="item" style="grid-template-columns:1fr"><div><b>${nm(SV[q.service])}</b> · ${esc(q.offer)} <span class="pill ${q.status}">${t("st")[q.status]}</span><div class="small mute">${esc(q.client.name)} · ${esc(q.client.phone)}</div><p style="margin:8px 0 0">${esc(q.message)}</p>
+   ${q.status==="priced"?`<div class="num small">${money(q.price)}</div>`:""}${q.status==="booked"?`<div class="num small" style="color:var(--ok)">${fmtDate(q.chosen.slice(0,10))} ${q.chosen.slice(11,16)}</div>`:""}</div>
+   ${q.status==="new"?`<div class="row" style="gap:8px"><button class="btn light sm" data-qprice="${q.id}">${t("sendPrice")}</button><button class="btn ghost sm" data-qmeet="${q.id}">${t("proposeMeet")}</button><button class="btn bad sm" data-qno="${q.id}">${t("impossible")}</button></div>`:""}</div>`).join(""):`<div class="empty">${t("noData")}</div>`}</div>`;}
+ if(tab==="orders"){body=`<div class="list">${st.orders.length?st.orders.map(o=>`<div class="item"><div><b class="num">${o.id}</b> · ${esc(o.client.name)} · ${esc(o.client.phone)}<div class="small mute">${o.items.map(i=>nm(SV[i.service])+(i.label?" · "+i.label:"")).join(" · ")}</div></div><b class="num">${money(o.total)}</b></div>`).join(""):`<div class="empty">${t("noData")}</div>`}</div>`;}
+ if(tab==="sms"){body=`<p class="small mute">${t("smsDemo")}</p><div class="list">${st.sms.length?st.sms.map(m=>`<div class="sms"><b>${esc(m.to)}</b> · <span class="mute">${esc(m.at)}</span><br>${esc(m.text)}</div>`).join(""):`<div class="empty">${t("noData")}</div>`}</div>`;}
+ return `<div class="wrap" style="padding:44px 20px 70px"><h1 style="font-size:2.4rem">${t("admin")}</h1><div class="demo" style="margin-top:12px">${t("adminDemo")}</div>
+ <div class="tabs">${tabs.map(([id,n])=>`<button class="chip ${tab===id?"on":""}" data-atab="${id}">${n}</button>`).join("")}</div>${body}</div>`;
+}
+
+/* ============ ACTIONS ============ */
+function payModal(amount,onOk){
+ modal(`<b style="font-family:var(--display);font-size:1.3rem">${t("ctp")}</b><div class="ctp"><div class="hd"><span>Billie Jean Records</span><span class="num">${money(amount)}</span></div><label class="small" for="ctp-n">${t("card")}</label><input id="ctp-n" value="4242 4242 4242 4242" inputmode="numeric"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input value="12/28" aria-label="Expiry"><input value="123" aria-label="CVV"></div></div><span class="small mute">${t("ctpDemo")}</span><div class="row" style="justify-content:flex-end"><button class="btn ghost" data-mclose>${t("cancel")}</button><button class="btn hot" id="ctp-pay">${t("pay")} ${money(amount)}</button></div>`);
+ $("#ctp-pay").onclick=()=>{modal("");toast(t("paidOk"));onOk()};
+}
+function checkout(){
+ const name=$("#c-name").value.trim(),phone=$("#c-phone").value.trim(),email=$("#c-email").value.trim();
+ st.me={name,phone,email};const T0=totals();
+ for(const c of st.cart)if(c.kind==="booking"&&T0.pm!=="onsite"&&!free(c.room,c.date,c.start,c.dur)){toast(t("conflict")+" "+nm(SV[c.service])+" "+hm(c.start));return}
+ const finish=()=>{
+  const client={name,phone,email};const items=st.cart.filter(c=>c.kind!=="booking");
+  for(const c of st.cart.filter(c=>c.kind==="booking")){
+   const status=T0.pm==="onsite"?"pending":"confirmed";const paid=T0.pm==="full"?c.price:T0.pm==="deposit"?Math.round(c.price*DEPOSIT*1000)/1000:0;
+   const b={id:"B-"+uid(),service:c.service,opt:c.opt,room:c.room,date:c.date,start:c.start,dur:c.dur,pay:T0.pm,status,client,amount:c.price,paid};st.bookings.push(b);
+   const when=`${fmtDate(b.date)} ${hm(b.start)}-${hm(b.start+b.dur*60)}`;
+   if(status==="confirmed"){sms(phone,`Billie Jean Records: your booking ${b.id} (${nm(SV[b.service])}) on ${when} is confirmed. Paid ${money(paid)} of ${money(b.amount)}.`,`Billie Jean Records : votre réservation ${b.id} (${nm(SV[b.service])}) du ${when} est confirmée. Payé ${money(paid)} sur ${money(b.amount)}.`);sms(STUDIO,`New booking ${b.id}: ${name}, ${when}.`,`Nouvelle réservation ${b.id} : ${name}, ${when}.`)}
+   else{sms(phone,`Billie Jean Records: we received your request ${b.id} for ${when}. Online bookings have priority; if the slot is still free the day before, it is confirmed automatically.`,`Billie Jean Records : demande ${b.id} reçue pour le ${when}. Les réservations en ligne sont prioritaires ; si le créneau est encore libre la veille, elle est confirmée automatiquement.`);sms(STUDIO,`New pay-on-site request ${b.id}: ${name}, ${when}.`,`Nouvelle demande sur place ${b.id} : ${name}, ${when}.`)}
+  }
+  if(items.length){const o={id:"C-"+uid(),client,items:items.map(i=>({service:i.service,label:nm(SV[i.service].offers[i.offer])+(i.qty?" ×"+i.qty:""),price:i.price})),total:items.reduce((a,i)=>a+i.price,0)};st.orders.push(o);
+   sms(phone,`Billie Jean Records: payment received for order ${o.id} (${money(o.total)}). We'll contact you to start.`,`Billie Jean Records : paiement reçu pour la commande ${o.id} (${money(o.total)}). Nous vous contactons pour démarrer.`);sms(STUDIO,`New paid order ${o.id}: ${money(o.total)}.`,`Nouvelle commande payée ${o.id} : ${money(o.total)}.`)}
+  st.cart=[];save();location.hash="account";render();
+ };
+ if(T0.now>0)payModal(T0.now,finish);else finish();
+}
+function quoteModal(sid,i){
+ const s=SV[sid],o=s.offers[i],me=st.me||{};
+ modal(`<b style="font-family:var(--display);font-size:1.3rem">${t("requestQuote")} · ${nm(s)}</b><span class="small mute">${t("quoteHelp")}</span><form id="qform" style="display:grid;gap:10px"><label class="f" for="q-msg">${t("message")}<textarea class="i" id="q-msg" required></textarea></label><label class="f" for="q-name">${t("name")}<input class="i" id="q-name" required value="${esc(me.name)}"></label><label class="f" for="q-phone">${t("phone")}<input class="i" id="q-phone" required value="${esc(me.phone||"+216 ")}"></label><div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-mclose>${t("cancel")}</button><button class="btn hot">${t("send")}</button></div></form>`);
+ $("#qform").onsubmit=e=>{e.preventDefault();const client={name:$("#q-name").value.trim(),phone:$("#q-phone").value.trim()};st.me={...(st.me||{}),...client};
+  const q={id:"Q-"+uid(),service:sid,offer:nm(o),client,message:$("#q-msg").value.trim(),status:"new",created:addDays(0)};st.quotes.unshift(q);
+  sms(client.phone,`Billie Jean Records: quote request ${q.id} received. We'll reply soon.`,`Billie Jean Records : demande de devis ${q.id} reçue. Nous vous répondons rapidement.`);sms(STUDIO,`New quote request ${q.id} (${nm(s)}) from ${client.name}.`,`Nouvelle demande de devis ${q.id} (${nm(s)}) de ${client.name}.`);
+  save();modal("");rerender()};
+}
+function moveModal(id){
+ const b=st.bookings.find(x=>x.id===id);let d=b.date,m=null;
+ const draw=()=>{const starts=[];for(let x=OPEN;x<=CLOSE-b.dur*60;x+=30)starts.push(x);
+  modal(`<b style="font-family:var(--display);font-size:1.3rem">${t("move")}</b><span class="small mute">${nm(SV[b.service])} · ${b.dur} ${t("hour")}</span><div class="days">${[...Array(14)].map((_,i)=>addDays(i)).map(k=>`<button class="day ${d===k?"on":""}" data-md="${k}"><b class="num">${new Date(k+"T12:00:00").getDate()}</b></button>`).join("")}</div><div class="times">${starts.map(x=>`<button class="time num ${m===x?"on":""}" data-mm="${x}" ${free(b.room,d,x,b.dur,b.id)?"":"disabled"}>${hm(x)}</button>`).join("")}</div><div class="row" style="justify-content:flex-end"><button class="btn ghost" data-mclose>${t("cancel")}</button><button class="btn hot" id="mv-ok" ${m==null?"disabled":""}>${t("send")}</button></div>`);
+  document.querySelectorAll("[data-md]").forEach(e=>e.onclick=()=>{d=e.dataset.md;m=null;draw()});document.querySelectorAll("[data-mm]").forEach(e=>e.onclick=()=>{m=+e.dataset.mm;draw()});
+  $("#mv-ok").onclick=()=>{b.move={date:d,start:m};sms(STUDIO,`Change request for ${b.id}: ${fmtDate(d)} ${hm(m)}.`,`Demande de changement pour ${b.id} : ${fmtDate(d)} ${hm(m)}.`);save();modal("");rerender()}};
+ draw();
+}
+function priceModal(id){const q=st.quotes.find(x=>x.id===id);
+ modal(`<b style="font-family:var(--display);font-size:1.3rem">${t("sendPrice")} · ${nm(SV[q.service])}</b><form id="pf" style="display:grid;gap:10px"><label class="f" for="p-v">${t("price")} (TND)<input class="i num" id="p-v" type="number" min="1" required value="500"></label><label class="f" for="p-n">Note<input class="i" id="p-n" placeholder="${L()==="fr"?"Ce qui est inclus":"What is included"}"></label><div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-mclose>${t("cancel")}</button><button class="btn hot">${t("sendPrice")}</button></div></form>`);
+ $("#pf").onsubmit=e=>{e.preventDefault();q.status="priced";q.price=+$("#p-v").value;q.note=$("#p-n").value;sms(q.client.phone,`Billie Jean Records: your quote ${q.id} is ready: ${money(q.price)}. Accept and pay in your space.`,`Billie Jean Records : votre devis ${q.id} est prêt : ${money(q.price)}. Acceptez et payez dans votre espace.`);save();modal("");rerender()};
+}
+function meetModal(id){const q=st.quotes.find(x=>x.id===id);const base=[1,1,2,3,4].map((d,i)=>addDays(d)+"T"+["11:00","16:00","14:00","10:30","17:00"][i]);
+ modal(`<b style="font-family:var(--display);font-size:1.3rem">${t("proposeMeet")}</b><span class="small mute">${L()==="fr"?"Proposez 4 à 5 créneaux. Le client n'en voit pas d'autres.":"Offer 4 to 5 times. The client only sees these."}</span><form id="mf" style="display:grid;gap:8px">${base.map((v,i)=>`<input class="i num" type="datetime-local" id="m-${i}" value="${v}" aria-label="Slot ${i+1}">`).join("")}<div class="seg"><button type="button" class="on" data-mode="online">${t("online")}</button><button type="button" data-mode="inperson">${t("inperson")}</button></div><div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-mclose>${t("cancel")}</button><button class="btn hot">${t("proposeMeet")}</button></div></form>`);
+ let mode="online";document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("on",x===b))});
+ $("#mf").onsubmit=e=>{e.preventDefault();const slots=base.map((_,i)=>$("#m-"+i).value).filter(Boolean);if(slots.length<4){toast(L()==="fr"?"Proposez au moins 4 créneaux.":"Offer at least 4 times.");return}
+  q.status="meeting";q.slots=slots;q.mode=mode;sms(q.client.phone,`Billie Jean Records: your request ${q.id} needs a meeting. Pick a time in your space.`,`Billie Jean Records : votre demande ${q.id} nécessite une réunion. Choisissez un créneau dans votre espace.`);save();modal("");rerender()};
+}
+function noModal(id){const q=st.quotes.find(x=>x.id===id);
+ modal(`<b style="font-family:var(--display);font-size:1.3rem">${t("impossible")}</b><form id="nf" style="display:grid;gap:10px"><label class="f" for="n-r">${L()==="fr"?"Raison (visible par le client)":"Reason (shown to the client)"}<input class="i" id="n-r"></label><div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" data-mclose>${t("cancel")}</button><button class="btn bad">${t("impossible")}</button></div></form>`);
+ $("#nf").onsubmit=e=>{e.preventDefault();q.status="impossible";q.note=$("#n-r").value;sms(q.client.phone,`Billie Jean Records: sorry, we can't take on request ${q.id}.`,`Billie Jean Records : désolé, nous ne pouvons pas réaliser la demande ${q.id}.`);save();modal("");rerender()};
+}
+function runJ1(){
+ const lim=addDays(1);let n=0;
+ for(const b of st.bookings.filter(x=>x.status==="pending"&&x.date<=lim)){n++;const when=`${fmtDate(b.date)} ${hm(b.start)}`;
+  if(free(b.room,b.date,b.start,b.dur,b.id)||blocking(b.room,b.date,b.id).every(x=>b.start+b.dur*60+BUFFER<=x.start||x.start+x.dur*60+BUFFER<=b.start)){b.status="confirmed";sms(b.client.phone,`Billie Jean Records: your booking ${b.id} on ${when} is now confirmed. Payment at the studio.`,`Billie Jean Records : votre réservation ${b.id} du ${when} est confirmée. Paiement au studio.`)}
+  else{b.status="refused";sms(b.client.phone,`Billie Jean Records: sorry, the slot ${when} for ${b.id} was booked online. Please choose another time.`,`Billie Jean Records : désolé, le créneau du ${when} (${b.id}) a été réservé en ligne. Merci d'en choisir un autre.`)}}
+ if(!n)toast(t("noData"));save();rerender();
+}
+
+/* ============ EVENTS ============ */
+document.addEventListener("click",e=>{
+ if(e.target.id==="mbg"){modal("");return}
+ const el=e.target.closest("button,[data-mclose]");if(!el)return;const d=el.dataset;
+ if("mclose" in d){modal("");return}
+ if(d.lang){st.lang=d.lang;save();rerender();return}
+ if(el.id==="reset"){try{localStorage.removeItem("bjr-demo")}catch(_){}const l=st.lang;st=seed();st.lang=l;save();rerender();toast(t("saved"));return}
+ if(d.cat){view.catFilter=d.cat;location.hash="services";return}
+ if(d.filter){view.catFilter=d.filter;rerender();return}
+ const sid=location.hash.slice(3),b=view.book[sid];
+ if(d.bopt!=null){b.opt=+d.bopt;rerender();return}
+ if(d.bdate){b.date=d.bdate;b.start=null;rerender();return}
+ if(d.bdur){b.dur=Math.max(1,Math.min(12,b.dur+ +d.bdur));rerender();return}
+ if(d.bstart){b.start=+d.bstart;rerender();return}
+ if(d.addbook){const s=SV[d.addbook];st.cart.push({kind:"booking",service:s.id,opt:b.opt,room:s.room,date:b.date,start:b.start,dur:b.dur,price:priceHours(s.opts[b.opt].r,b.dur)});b.start=null;save();toast(t("added"));rerender();return}
+ if(d.add){const [id,i]=d.add.split("|");const o=SV[id].offers[i];let qty=null,price=o.price;if(o.t==="unit"){qty=Math.max(1,+$(`#qty-${id}-${i}`).value||1);price=qty*o.price}
+  st.cart.push({kind:"item",service:id,offer:+i,qty,price});save();toast(t("added"));rerender();return}
+ if(d.quote){const [id,i]=d.quote.split("|");quoteModal(id,+i);return}
+ if(d.rm!=null){st.cart.splice(+d.rm,1);save();rerender();return}
+ if(el.id==="logout"){st.me=null;save();rerender();return}
+ if(d.move){moveModal(d.move);return}
+ if(d.qpay){const q=st.quotes.find(x=>x.id===d.qpay);payModal(q.price,()=>{q.status="paid";st.orders.push({id:"C-"+uid(),client:q.client,items:[{service:q.service,label:q.offer,price:q.price}],total:q.price});sms(q.client.phone,`Billie Jean Records: payment received for quote ${q.id}. Thank you!`,`Billie Jean Records : paiement reçu pour le devis ${q.id}. Merci !`);sms(STUDIO,`Quote ${q.id} paid: ${money(q.price)}.`,`Devis ${q.id} payé : ${money(q.price)}.`);save();rerender()});return}
+ if(d.pick){const [id,i]=d.pick.split("|");const q=st.quotes.find(x=>x.id===id);q.chosen=q.slots[+i];q.status="booked";const w=`${fmtDate(q.chosen.slice(0,10))} ${q.chosen.slice(11,16)}`;sms(q.client.phone,`Billie Jean Records: meeting confirmed on ${w}.`,`Billie Jean Records : réunion confirmée le ${w}.`);sms(STUDIO,`Meeting for ${q.id} booked: ${w}.`,`Réunion pour ${q.id} fixée : ${w}.`);save();rerender();return}
+ if(d.atab){view.adminTab=d.atab;rerender();return}
+ if(d.aday){view.adminDay=d.aday;rerender();return}
+ if(d.val){const b=st.bookings.find(x=>x.id===d.val);if(!blocking(b.room,b.date,b.id).every(x=>b.start+b.dur*60+BUFFER<=x.start||x.start+x.dur*60+BUFFER<=b.start)){toast(t("conflict"));return}b.status="confirmed";sms(b.client.phone,`Billie Jean Records: your booking ${b.id} on ${fmtDate(b.date)} ${hm(b.start)} is confirmed. Payment at the studio.`,`Billie Jean Records : votre réservation ${b.id} du ${fmtDate(b.date)} ${hm(b.start)} est confirmée. Paiement au studio.`);save();rerender();return}
+ if(d.ref){const b=st.bookings.find(x=>x.id===d.ref);b.status="refused";sms(b.client.phone,`Billie Jean Records: sorry, we can't confirm your request ${b.id}.`,`Billie Jean Records : désolé, nous ne pouvons pas confirmer votre demande ${b.id}.`);save();rerender();return}
+ if(d.mvok){const b=st.bookings.find(x=>x.id===d.mvok);if(!free(b.room,b.move.date,b.move.start,b.dur,b.id)){toast(t("conflict"));return}b.date=b.move.date;b.start=b.move.start;b.move=null;sms(b.client.phone,`Billie Jean Records: your booking ${b.id} is moved to ${fmtDate(b.date)} ${hm(b.start)}.`,`Billie Jean Records : votre réservation ${b.id} est déplacée au ${fmtDate(b.date)} ${hm(b.start)}.`);save();rerender();return}
+ if(d.mvno){const b=st.bookings.find(x=>x.id===d.mvno);b.move=null;sms(b.client.phone,`Billie Jean Records: we can't move booking ${b.id}; it stays as planned.`,`Billie Jean Records : nous ne pouvons pas déplacer la réservation ${b.id} ; elle reste prévue comme avant.`);save();rerender();return}
+ if(d.qprice){priceModal(d.qprice);return}
+ if(d.qmeet){meetModal(d.qmeet);return}
+ if(d.qno){noModal(d.qno);return}
+ if(el.id==="j1"){runJ1();return}
+});
+document.addEventListener("change",e=>{if(e.target.name==="pm"){view.pay=e.target.value;rerender()}});
+document.addEventListener("submit",e=>{
+ if(e.target.id==="checkout"){e.preventDefault();checkout()}
+ if(e.target.id==="login"){e.preventDefault();st.me={phone:$("#l-phone").value.trim()};save();rerender()}
+});
+window.addEventListener("hashchange",render);
+render();
+</script>
+</body>
+</html>
