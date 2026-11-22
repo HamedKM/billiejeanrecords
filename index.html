@@ -333,7 +333,7 @@ const T={
   adminDemo:"Demo admin. In the real platform this area is protected by a login.",tCal:"Calendar",tReq:"Requests",tQuotes:"Quotes",tOrders:"Orders",tSms:"SMS sent",j1:"Run the D-1 check now",validate:"Validate",refuse:"Refuse",accept:"Accept",
   sendPrice:"Send price",proposeMeet:"Propose meeting",impossible:"Not possible",price:"Price",online:"Online",inperson:"At the studio",reset:"Reset demo",noData:"Nothing yet.",
   smsDemo:"SMS through WinSMS (simulated in this demo)",conflict:"This slot is no longer free.",saved:"Done",closed:"Closed",
-  searchPh:"Search a service: mix, voix, logo, t-shirt…",results:"results",result1:"result",closest:"No exact match. Here are the closest services:",noResult:"No service found. Try another word.",soon:"Online booking and payment open soon. Until then, book by phone: +216 51 534 543.",demoBanner:"Test version. Payments (ClicToPay) and SMS (WinSMS) are simulated. Data stays in this browser.",phoneNum:"+216 51 534 543"},
+  searchPh:"Search a service: mix, voix, logo, t-shirt…",results:"results",result1:"result",otherCats:"Nothing in this category. Results from all services:",closest:"No exact match. Here are the closest services:",noResult:"No service found. Try another word.",soon:"Online booking and payment open soon. Until then, book by phone: +216 51 534 543.",demoBanner:"Test version. Payments (ClicToPay) and SMS (WinSMS) are simulated. Data stays in this browser.",phoneNum:"+216 51 534 543"},
  fr:{services:"Services",account:"Mon espace",admin:"Admin studio",cart:"Panier",heroA:"L'art est votre métier.",heroB:"Le business est notre art.",heroP:"Enregistrement, mix, mastering, distribution, image et merch. Un studio à Sousse pour chaque étape d'une carrière d'artiste.",bookRoom:"Réserver une salle",explore:"Voir les services",journey:"Votre sortie, étape par étape",journeyP:"Chaque service renvoie au suivant : vous savez toujours ce qui vient après.",cats:"Ce que nous faisons",rooms:"Deux salles à Sousse",roomsP:"Réservation à l'heure. 10 minutes restent libres entre deux sessions.",nextFree:"Prochain créneau libre",all:"Tout",book:"Réserver",buy:"Achat en ligne",quote:"Sur devis",from:"À partir de",perPiece:"par pièce",tnd:"TND",
   alt:"Alternatives",comp:"À prendre avec",next:"Étape suivante",prereq:"Nécessaire avant",nothing:"Rien ici pour ce service.",
   option:"Option",date:"Date",duration:"Durée",start:"Heure de début",hour:"h",total:"Total",addCart:"Ajouter au panier",added:"Ajouté au panier",requestQuote:"Demander un devis",
@@ -349,7 +349,7 @@ const T={
   adminDemo:"Admin de démo. Dans la vraie plateforme, cet espace est protégé par un identifiant.",tCal:"Calendrier",tReq:"Demandes",tQuotes:"Devis",tOrders:"Commandes",tSms:"SMS envoyés",j1:"Lancer la vérification J-1 maintenant",validate:"Valider",refuse:"Refuser",accept:"Accepter",
   sendPrice:"Envoyer le prix",proposeMeet:"Proposer une réunion",impossible:"Impossible",price:"Prix",online:"En ligne",inperson:"Au studio",reset:"Réinitialiser la démo",noData:"Rien pour l'instant.",
   smsDemo:"SMS via WinSMS (simulés dans cette démo)",conflict:"Ce créneau n'est plus libre.",saved:"C'est fait",closed:"Fermé",
-  searchPh:"Chercher un service : mix, voix, logo, t-shirt…",results:"résultats",result1:"résultat",closest:"Pas de résultat exact. Voici les services les plus proches :",noResult:"Aucun service trouvé. Essayez un autre mot.",soon:"La réservation et le paiement en ligne ouvrent bientôt. En attendant, réservez par téléphone : +216 51 534 543.",demoBanner:"Version de test. Les paiements (ClicToPay) et les SMS (WinSMS) sont simulés. Les données restent dans ce navigateur.",phoneNum:"+216 51 534 543"}
+  searchPh:"Chercher un service : mix, voix, logo, t-shirt…",results:"résultats",result1:"résultat",otherCats:"Rien dans cette catégorie. Résultats dans tous les services :",closest:"Pas de résultat exact. Voici les services les plus proches :",noResult:"Aucun service trouvé. Essayez un autre mot.",soon:"La réservation et le paiement en ligne ouvrent bientôt. En attendant, réservez par téléphone : +216 51 534 543.",demoBanner:"Version de test. Les paiements (ClicToPay) et les SMS (WinSMS) sont simulés. Les données restent dans ce navigateur.",phoneNum:"+216 51 534 543"}
 };
 let st;
 const L=()=>st.lang;
@@ -531,6 +531,7 @@ function gridHTML(){
  const allowed=new Set(base.map(s=>s.id));const inCat=res.filter(r=>allowed.has(r.s.id));
  const good=inCat.filter(r=>r.score>=.5);
  if(good.length)return {html:good.map(r=>card(r.s)).join(""),info:`${good.length} ${t(good.length>1?"results":"result1")}`};
+ if(view.catFilter!=="all"){const g2=res.filter(r=>r.score>=.5);if(g2.length)return {html:g2.map(r=>card(r.s)).join(""),info:t("otherCats")}}
  const near=inCat.slice(0,4);
  return {html:near.map(r=>card(r.s)).join(""),info:near.length?t("closest"):t("noResult")};
 }
