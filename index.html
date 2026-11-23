@@ -499,6 +499,9 @@ const KW={
  "necklaces":"collier colliers necklace chaine chain bijou bijoux jewelry merch",
  "smartphone-cases":"coque coques phone case telephone iphone smartphone etui merch"
 };
+// Music styles: any of these sends studio services to the top of the results.
+const GENRES="rap hiphop hip hop trap drill rnb soul funk pop rock metal punk indie folk blues jazz gospel reggae reggaeton dancehall afro afrobeat afrobeats amapiano kpop latino salsa electro electronique electronic edm house techno trance dubstep drum bass dnb lofi ambient chill classique classical opera orchestre symphonique variete chanson slam mezwed mezoued rai chaabi malouf stambeli tarab oriental orientale khaleeji sharqi arabe arabic andalou flamenco country musique music son sons beat beats instrumental instru";
+const STUDIO_ORDER=["vocal-recording","instrument-recording","analog-mix","digital-mix","studio-mastering","ai-mastering"];
 const norm=x=>String(x||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g," ").trim();
 const IDX=S.map(s=>{const c=CATS.find(c=>c.id===s.cat);
  const strong=norm([s.en,s.fr,KW[s.id]].join(" ")).split(" ").filter(Boolean);
@@ -520,8 +523,12 @@ function wordScore(q,words){let best=0;
 function search(query){
  const qs=norm(query).split(" ").filter(Boolean);if(!qs.length)return null;
  const qfull=norm(query);
- return IDX.map(x=>{let total=0,hits=0;for(const q of qs){const a=wordScore(q,x.strong),b=wordScore(q,x.weak)*.5;const v=Math.max(a,b);total+=v;if(v>=.5)hits++}
-  let score=total/qs.length;if(x.full.includes(qfull))score+=.5;if(hits===qs.length)score+=.2;return {s:x.s,score}})
+ const GW=norm(GENRES).split(" ");const gq=qs.filter(q=>wordScore(q,GW)>=.7);const genre=gq.length>0;const others=qs.filter(q=>!gq.includes(q));
+ const mt=genre&&others.length?others:qs;
+ return IDX.map(x=>{let total=0,hits=0;for(const q of mt){const a=wordScore(q,x.strong),b=wordScore(q,x.weak)*.45;const v=Math.max(a,b);total+=v;if(v>=.5)hits++}
+  let score=total/mt.length;if(x.full.includes(qfull))score+=.5;if(hits===mt.length)score+=.2;
+  if(genre){const i=STUDIO_ORDER.indexOf(x.s.id);if(others.length){if(i>=0)score+=.4}else{if(i>=0)score=5-i*.1;else if(x.s.cat==="dj")score+=.3}}
+  return {s:x.s,score}})
   .filter(r=>r.score>0).sort((a,b)=>b.score-a.score);
 }
 function gridHTML(){
